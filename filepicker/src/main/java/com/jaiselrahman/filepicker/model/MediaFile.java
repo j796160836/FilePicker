@@ -19,7 +19,7 @@ package com.jaiselrahman.filepicker.model;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.IntDef;
+import android.support.annotation.IntDef;
 
 public class MediaFile implements Parcelable {
     public static final int TYPE_FILE = 0;

@@ -18,8 +18,8 @@ package com.jaiselrahman.filepicker.utils;
 
 import android.content.Context;
 import android.net.Uri;
-import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
+import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 
 import java.io.File;
 
