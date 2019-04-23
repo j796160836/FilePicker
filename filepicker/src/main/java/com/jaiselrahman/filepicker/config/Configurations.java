@@ -221,7 +221,6 @@ public class Configurations implements Parcelable {
         }
     }
 
-    @Nullable
     private String[] getIgnorePaths() {
         if (ignorePathMatchers != null && ignorePathMatchers.length > 0) {
             String ignorePaths[] = new String[ignorePathMatchers.length];
@@ -342,7 +341,7 @@ public class Configurations implements Parcelable {
             return this;
         }
 
-        public Builder setSelectedMediaFile(@Nullable MediaFile selectedMediaFile) {
+        public Builder setSelectedMediaFile(MediaFile selectedMediaFile) {
             if (selectedMediaFile != null) {
                 this.selectedMediaFiles = new ArrayList<>();
                 this.selectedMediaFiles.add(selectedMediaFile);
