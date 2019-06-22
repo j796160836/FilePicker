@@ -109,7 +109,13 @@ public class FilePickerActivity extends AppCompatActivity
         recyclerView.addItemDecoration(new DividerItemDecoration(this));
         recyclerView.setItemAnimator(null);
 
-        if (requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSION)) {
+        String[] requirePermissions;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            requirePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        } else {
+            requirePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        }
+        if (requestPermission(requirePermissions, REQUEST_WRITE_PERMISSION)) {
             loadFiles(false);
         }
 
@@ -136,19 +142,28 @@ public class FilePickerActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_WRITE_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (isPermissionAllGranted(grantResults)) {
                 loadFiles(false);
             } else {
                 Toast.makeText(this, R.string.permission_not_given, Toast.LENGTH_SHORT).show();
                 finish();
             }
         } else if (requestCode == REQUEST_CAMERA_PERMISSION_FOR_CAMERA || requestCode == REQUEST_CAMERA_PERMISSION_FOR_VIDEO) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (isPermissionAllGranted(grantResults)) {
                 fileGalleryAdapter.openCamera(requestCode == REQUEST_CAMERA_PERMISSION_FOR_VIDEO);
             } else {
                 Toast.makeText(this, R.string.permission_not_given, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private boolean isPermissionAllGranted(int[] grantResults) {
+        for (int grantResult : grantResults) {
+            if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -226,10 +241,17 @@ public class FilePickerActivity extends AppCompatActivity
 
     @Override
     public boolean onCameraClick(boolean forVideo) {
+        String[] requirePermissions;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            requirePermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        } else {
+            requirePermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        }
         return requestPermission(
-                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                requirePermissions,
                 forVideo ? REQUEST_CAMERA_PERMISSION_FOR_VIDEO : REQUEST_CAMERA_PERMISSION_FOR_CAMERA
         );
+
     }
 
     public boolean requestPermission(String[] permissions, int requestCode) {
